@@ -4,20 +4,20 @@ import java.util.LinkedList;
 
 public class Panel extends JPanel{
 	protected LinkedList<Line> lines = new LinkedList<Line>();
-	static final int DEFAULT_STROKE = 4;
+	static final double DEFAULT_STROKE = 4;
 	static boolean clearing = false;
 	
-	public void addLine(int x1, int y1, int x2, int y2, int stroke, Color color) {
+	public void addLine(double x1, double y1, double x2, double y2, double stroke, Color color) {
 		Line line = new Line(x1, y1, x2, y2, stroke, color);
 		lines.add(line);
 		this.repaint();
 	}
 	
-	public void addLine(int x1, int y1, int x2, int y2) {
+	public void addLine(double x1, double y1, double x2, double y2) {
 		addLine(x1, y1, x2, y2, DEFAULT_STROKE, Color.BLACK);
 	}
 	
-	public void addLine(int x1, int y1, int x2, int y2, int stroke) {
+	public void addLine(double x1, double y1, double x2, double y2, double stroke) {
 		addLine(x1, y1, x2, y2, stroke, Color.BLACK);
 	}
 	
@@ -41,8 +41,8 @@ public class Panel extends JPanel{
         	Line line = lines.get(i);
         	
         	g2d.setColor(line.color);
-            g2d.setStroke(new BasicStroke(line.stroke));
-        	g2d.drawLine(line.x1, line.y1, line.x2, line.y2);
+            g2d.setStroke(new BasicStroke((int) line.stroke));
+        	g2d.drawLine((int) line.x1, (int) line.y1, (int) line.x2, (int) line.y2);
         }
 	}
 }
