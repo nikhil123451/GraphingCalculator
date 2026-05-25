@@ -13,11 +13,17 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JButton eBB;
 	static JSlider dS;
 	static JLabel dL;
+	
+	static ExpressionSimplifier es = new ExpressionSimplifier();
+	
 	static int screenWidth;
 	static int screenHeight;
 	static final int X_SIZE_OFFSET = 40;
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
-	static int detail = 10;
+	static final int POINT_THICKNESS = 7;
+	static final double X_BOUND = 12;
+	static final double Y_BOUND = 45;
+	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
 	
@@ -62,14 +68,14 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
         dS.setPaintTrack(true);
         dS.setPaintTicks(true);
         dS.setPaintLabels(true);
-        dS.setValue(10);
+        dS.setValue(1);
         dS.setOrientation(SwingConstants.HORIZONTAL);
         dS.setMajorTickSpacing(1);
         dS.setSnapToTicks(true);
         dS.addChangeListener(gc);
         dS.setFont(new Font("Arial", Font.BOLD, 14));
 		
-		dL = new JLabel("Detail: 10");
+		dL = new JLabel("Detail: 1");
 		size = dL.getPreferredSize();
 		dL.setBounds(100, 480, size.width, size.height);
 		
@@ -82,15 +88,43 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		pn.add(dL);
 		
 		frame.setVisible(true);
+	}
+	
+	private void graph(String expression) {
 		
-		pn.addLine(xOffset + -9*X_SIZE_OFFSET, 400, xOffset + 12*X_SIZE_OFFSET, yOffset - 14*Y_SIZE_OFFSET);
+		double deltaX = X_BOUND / (detail * 10.0); //scaling detail by a factor of 10
+		double x1;
+		double y1;
+		double x2;
+		double y2;
+		String newExpression;
+		
+		System.out.println(es.simplifyExpression("-1"));
+		
+		for (double i = 0 ; i > -12 ; i -= deltaX) {
+			x1 = Math.abs(i);
+			newExpression = expression.replace("x", Double.toString(x1));
+			y1 = es.simplifyExpression(newExpression);
+			x2 = x1;
+			y2 = y1;
+			
+			x1 = xOffset + x1*X_SIZE_OFFSET;
+			y1 = yOffset - y1*Y_SIZE_OFFSET;
+			x2 = xOffset + x2*X_SIZE_OFFSET;
+			y2 = yOffset - y2*Y_SIZE_OFFSET;
+			
+			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
+		}
+		for (double i = deltaX ; i < 12 ; i += deltaX) {
+			
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e)
     {
         String s = e.getActionCommand();
         if (s.equals("Graph")) {
-            pn.clear();
+            graph(eB.getText());
         }
     }
 	
