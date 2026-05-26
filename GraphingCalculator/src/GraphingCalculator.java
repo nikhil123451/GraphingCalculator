@@ -11,6 +11,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JTextField eB;
 	static JLabel eBL;
 	static JButton eBB;
+	static JButton cB;
 	static JSlider dS;
 	static JLabel dL;
 	
@@ -62,6 +63,11 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		eBB.setBounds(300, 447, size.width + X_SIZE_OFFSET, size.height);
 		eBB.addActionListener(gc);
 		
+		cB = new JButton("Clear");
+		size = cB.getPreferredSize();
+		cB.setBounds(425, 447, size.width + X_SIZE_OFFSET, size.height);
+		cB.addActionListener(gc);
+		
 		dS = new JSlider(0, 10);
 		size = dS.getPreferredSize();
 		dS.setBounds(80, 500, size.width + X_SIZE_OFFSET, size.height + X_SIZE_OFFSET);
@@ -86,6 +92,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		pn.add(eBB);
 		pn.add(dS);
 		pn.add(dL);
+		pn.add(cB);
 		
 		frame.setVisible(true);
 	}
@@ -99,11 +106,9 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		double y2;
 		String newExpression;
 		
-		System.out.println(es.simplifyExpression("-1"));
-		
-		for (double i = 0 ; i > -12 ; i -= deltaX) {
-			x1 = Math.abs(i);
-			newExpression = expression.replace("x", Double.toString(x1));
+		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
+			x1 = i;
+			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
 			y1 = es.simplifyExpression(newExpression);
 			x2 = x1;
 			y2 = y1;
@@ -115,8 +120,19 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 			
 			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 		}
-		for (double i = deltaX ; i < 12 ; i += deltaX) {
+		for (double i = deltaX ; i < X_BOUND ; i += deltaX) {
+			x1 = i;
+			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
+			y1 = es.simplifyExpression(newExpression);
+			x2 = x1;
+			y2 = y1;
 			
+			x1 = xOffset + x1*X_SIZE_OFFSET;
+			y1 = yOffset - y1*Y_SIZE_OFFSET;
+			x2 = xOffset + x2*X_SIZE_OFFSET;
+			y2 = yOffset - y2*Y_SIZE_OFFSET;
+			
+			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 		}
 	}
 	
@@ -125,6 +141,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
         String s = e.getActionCommand();
         if (s.equals("Graph")) {
             graph(eB.getText());
+        } else if (s.equals("Clear")) {
+        	pn.clear();
         }
     }
 	
