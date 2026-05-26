@@ -56,7 +56,12 @@ public class ExpressionSimplifier {
 		int operatorIndex = findHighestOrderOperator(expression);
 
 		if (operatorIndex == OPERATOR_NOT_FOUND) {
-			return new Operation(Double.parseDouble(expression));
+			if (expression.equals("")) {
+				return new Operation(0.0);
+			} else {
+				return new Operation(Double.parseDouble(expression));	
+			}
+			
 		}
 		else if (operatorIndex == ENCLOSED_IN_BRACKETS) {
 			//simple recursive case... just strip the brackets and reparse
@@ -78,7 +83,9 @@ public class ExpressionSimplifier {
 			return node.value;
 		}
 		else {
-			if (node.operator.equals("/")) {
+			if (node.operator.equals("^")) {
+				return Math.pow(simplifyExpression(node.lhs), simplifyExpression(node.rhs));
+			} else if (node.operator.equals("/")) {
 				return simplifyExpression(node.lhs) / simplifyExpression(node.rhs);
 			} else if (node.operator.equals("*")) {
 				return simplifyExpression(node.lhs) * simplifyExpression(node.rhs);
@@ -86,8 +93,6 @@ public class ExpressionSimplifier {
 				return simplifyExpression(node.lhs) - simplifyExpression(node.rhs);
 			} else if (node.operator.equals("+")) {
 				return simplifyExpression(node.lhs) + simplifyExpression(node.rhs);
-			} else if (node.operator.equals("^")) {
-				return Math.pow(simplifyExpression(node.lhs), simplifyExpression(node.rhs));
 			} else {
 				return 0; //should not reach here
 			}
@@ -98,6 +103,8 @@ public class ExpressionSimplifier {
 	//helper function... no need to modify
 	//returns the index in the input String of the single-character operator that should be evaluated next
 	private static int findHighestOrderOperator(String equation) {
+		
+		if (equation.length() == 0) return OPERATOR_NOT_FOUND;
 
 		int location = OPERATOR_NOT_FOUND;
 		int start = 0;
@@ -117,7 +124,7 @@ public class ExpressionSimplifier {
 				bracketCount--;
 			} 
 			else if ((current == '^') && (bracketCount == 0)){
-				if ((additionFound == false) && (multiplicationFound == false)) {
+				if ((additionFound == false) && (multiplicationFound == false) && (exponentFound == false)) {
 					location = index;
 					exponentFound = true;
 				}
