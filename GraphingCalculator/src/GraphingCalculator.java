@@ -83,7 +83,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		
 		dL = new JLabel("Detail: 1");
 		size = dL.getPreferredSize();
-		dL.setBounds(100, 480, size.width, size.height);
+		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
 		//adding everything to the frame and panel
 		frame.add(pn);
