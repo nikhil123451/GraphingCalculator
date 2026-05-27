@@ -43,6 +43,8 @@ public class ExpressionSimplifier {
 
 	//wrapper
 	public double simplifyExpression(String expression) {
+		
+		expression = insertImplicitMultiplication(expression);
 		//two stop process:
 		//1. go through the expression and parse it into a data structure representing the operations, the order of the operations, and values
 		Operation node = parseExpression(expression);
@@ -56,12 +58,7 @@ public class ExpressionSimplifier {
 		int operatorIndex = findHighestOrderOperator(expression);
 
 		if (operatorIndex == OPERATOR_NOT_FOUND) {
-			if (expression.equals("")) {
-				return new Operation(0.0);
-			} else {
-				return new Operation(Double.parseDouble(expression));	
-			}
-			
+			return new Operation(Double.parseDouble(expression));	
 		}
 		else if (operatorIndex == ENCLOSED_IN_BRACKETS) {
 			//simple recursive case... just strip the brackets and reparse
@@ -123,23 +120,47 @@ public class ExpressionSimplifier {
 			else if (current == ')') {
 				bracketCount--;
 			} 
-			else if ((current == '^') && (bracketCount == 0)){
-				if ((additionFound == false) && (multiplicationFound == false) && (exponentFound == false)) {
-					location = index;
-					exponentFound = true;
-				}
+			// exponentiation (RIGHT associative)
+			else if ((current == '^') && (bracketCount == 0)) {
+
+			    if (!additionFound && !multiplicationFound && !exponentFound) {
+			        location = index;
+			        exponentFound = true;
+			    }
 			}
+
+			// multiplication/division (LEFT associative)
 			else if ((current == '*' || current == '/') && (bracketCount == 0)) {
-				if ((additionFound == false) && (multiplicationFound == false)) {
-					location = index;
-					multiplicationFound = true;
-				}
+
+			    if (!additionFound) {
+			        location = index;
+			        multiplicationFound = true;
+			    }
 			}
+
+			// addition/subtraction (LEFT associative)
 			else if ((current == '+' || current == '-') && (bracketCount == 0)) {
-				if (additionFound == false) {
-					location = index;
-					additionFound = true;
-				}
+
+			    // detect unary +/- and skip it
+			    boolean unary = false;
+
+			    if (index == 0) {
+			        unary = true;
+			    } else {
+
+			        char prev = equation.charAt(index - 1);
+
+			        if (prev == '(' || prev == '+' || prev == '-' ||
+			            prev == '*' || prev == '/' || prev == '^') {
+
+			            unary = true;
+			        }
+			    }
+
+			    if (!unary) {
+			        location = index;
+			        additionFound = true;
+			    }
 			}
 //			System.out.println(String.format("index %d bracket %d location %d char %c +-%b */%b", index, bracketCount, location, current, additionFound, multiplicationFound));
 		}
@@ -173,6 +194,48 @@ public class ExpressionSimplifier {
 		} catch (Exception e) {
 		}
 		return input;
+	}
+	
+	private static String insertImplicitMultiplication(String expr) {
+
+	    String result = "";
+
+	    for (int i = 0; i < expr.length() - 1; i++) {
+
+	        char current = expr.charAt(i);
+	        char next = expr.charAt(i + 1);
+
+	        result += current;
+
+	        boolean currentCanMultiply =
+	                Character.isDigit(current) ||
+	                current == ')' ||
+	                current == '.';
+
+	        boolean nextCanMultiply =
+	                next == '(' ||
+	                Character.isLetter(next);
+
+	        // cases like:
+	        // 4(
+	        // )(
+	        // 2x
+	        if (currentCanMultiply && nextCanMultiply) {
+	            result += "*";
+	        }
+
+	        // case:
+	        // )(number)
+	        if (current == ')' &&
+	            (Character.isDigit(next) || next == '.')) {
+
+	            result += "*";
+	        }
+	    }
+
+	    result += expr.charAt(expr.length() - 1);
+
+	    return result;
 	}
 
 
