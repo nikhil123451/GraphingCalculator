@@ -19,12 +19,13 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	
 	static int screenWidth;
 	static int screenHeight;
+	static final int BOTTOM_SCREEN_LENGTH = 400;
 	static final int X_SIZE_OFFSET = 40;
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
 	static final int POINT_THICKNESS = 7;
-	static final double X_BOUND = 12;
+	static final double X_BOUND = 15;
 	static final double Y_BOUND = 45;
-	static int detail = 1;
+	static int detail = 1000;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
 	
@@ -109,7 +110,14 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
 			x1 = i;
 			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
-			y1 = es.simplifyExpression(newExpression);
+			y1 = 0;
+			try {
+				y1 = es.simplifyExpression(newExpression);
+			} catch (NumberFormatException e) {
+				System.out.println("caught");
+				break;
+			}
+			
 			x2 = x1;
 			y2 = y1;
 			
@@ -118,12 +126,20 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 			x2 = xOffset + x2*X_SIZE_OFFSET;
 			y2 = yOffset - y2*Y_SIZE_OFFSET;
 			
+			if (y1 >= BOTTOM_SCREEN_LENGTH) continue;
 			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 		}
 		for (double i = deltaX ; i < X_BOUND ; i += deltaX) {
 			x1 = i;
 			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
-			y1 = es.simplifyExpression(newExpression);
+			y1 = 0;
+			try {
+				y1 = es.simplifyExpression(newExpression);
+			} catch (NumberFormatException e) {
+				System.out.println("caught");
+				break;
+			}
+			
 			x2 = x1;
 			y2 = y1;
 			
@@ -132,6 +148,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 			x2 = xOffset + x2*X_SIZE_OFFSET;
 			y2 = yOffset - y2*Y_SIZE_OFFSET;
 			
+			if (y1 >= BOTTOM_SCREEN_LENGTH) continue;
 			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 		}
 	}
