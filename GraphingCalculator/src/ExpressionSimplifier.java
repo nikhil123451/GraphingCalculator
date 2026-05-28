@@ -44,7 +44,7 @@ public class ExpressionSimplifier {
 	//wrapper
 	public double simplifyExpression(String expression) {
 		
-		expression = insertImplicitMultiplication(expression);
+		expression = insertImplicitMultiplication(expression); //method to handle cases like ")(" or "4x"
 		//two stop process:
 		//1. go through the expression and parse it into a data structure representing the operations, the order of the operations, and values
 		Operation node = parseExpression(expression);
@@ -119,42 +119,33 @@ public class ExpressionSimplifier {
 			}
 			else if (current == ')') {
 				bracketCount--;
-			} 
-			// exponentiation (RIGHT associative)
+			}
+			
 			else if ((current == '^') && (bracketCount == 0)) {
-
-			    if (!additionFound && !multiplicationFound && !exponentFound) {
+			    if ((additionFound == false) && (multiplicationFound == false) && (exponentFound == false)) {
 			        location = index;
 			        exponentFound = true;
 			    }
 			}
 
-			// multiplication/division (LEFT associative)
 			else if ((current == '*' || current == '/') && (bracketCount == 0)) {
-
-			    if (!additionFound) {
+			    if (additionFound == false) {
 			        location = index;
 			        multiplicationFound = true;
 			    }
 			}
 
-			// addition/subtraction (LEFT associative)
 			else if ((current == '+' || current == '-') && (bracketCount == 0)) {
 
-			    // detect unary +/- and skip it
-			    boolean unary = false;
+			    boolean unary = false; //assume it's a real addition/subtraction
 
-			    if (index == 0) {
+			    if (index == 0) { //nothing before the +/- sign
 			        unary = true;
 			    } else {
 
-			        char prev = equation.charAt(index - 1);
+			        char previous = equation.charAt(index - 1);
 
-			        if (prev == '(' || prev == '+' || prev == '-' ||
-			            prev == '*' || prev == '/' || prev == '^') {
-
-			            unary = true;
-			        }
+			        if (previous == '(' || previous == '+' || previous == '-' || previous == '*' || previous == '/' || previous == '^') unary = true;
 			    }
 
 			    if (!unary) {
@@ -196,36 +187,22 @@ public class ExpressionSimplifier {
 		return input;
 	}
 	
-	private static String insertImplicitMultiplication(String expr) {
+	private static String insertImplicitMultiplication(String expression) { //helper method to place multiplication symbols where needed
 
 	    String result = "";
 
-	    for (int i = 0; i < expr.length() - 1; i++) {
+	    for (int i = 0; i < expression.length() - 1; i++) {
 
-	        char current = expr.charAt(i);
-	        char next = expr.charAt(i + 1);
-
+	        char current = expression.charAt(i);
+	        char next = expression.charAt(i + 1);
 	        result += current;
 
-	        boolean currentCanMultiply =
-	                Character.isDigit(current) ||
-	                current == ')' ||
-	                current == '.';
+	        boolean currentCanMultiply = Character.isDigit(current) || current == ')' || current == '.';
+	        boolean nextCanMultiply = next == '(' || Character.isLetter(next); //checking for x's
 
-	        boolean nextCanMultiply =
-	                next == '(' ||
-	                Character.isLetter(next);
-
-	        // cases like:
-	        // 4(
-	        // )(
-	        // 2x
 	        if (currentCanMultiply && nextCanMultiply) {
 	            result += "*";
 	        }
-
-	        // case:
-	        // )(number)
 	        if (current == ')' &&
 	            (Character.isDigit(next) || next == '.')) {
 
@@ -233,7 +210,7 @@ public class ExpressionSimplifier {
 	        }
 	    }
 
-	    result += expr.charAt(expr.length() - 1);
+	    result += expression.charAt(expression.length() - 1);
 
 	    return result;
 	}
