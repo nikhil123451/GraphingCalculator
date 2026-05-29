@@ -87,9 +87,9 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		size = dL.getPreferredSize();
 		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
-		eL = new JLabel("e");
+		eL = new JLabel("");
 		size = eL.getPreferredSize();
-		eL.setBounds(100, 430, size.width + X_SIZE_OFFSET, size.height);
+		eL.setBounds(100, 430, size.width + 6*X_SIZE_OFFSET, size.height);
 		
 		//adding everything to the frame and panel
 		frame.add(pn);
@@ -122,16 +122,11 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		try {
 			y1 = es.simplifyExpression(newExpression);
 		} catch (NumberFormatException e) {
-			eL.setVisible(true);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			eL.setVisible(false);
+			eL.setText("Sorry, I didn't understand your input.");
 			return;
 		}
 		
+		eL.setText("");
 		double x2 = x1;
 		double y2 = y1;
 		
