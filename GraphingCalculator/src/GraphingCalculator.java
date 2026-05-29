@@ -2,6 +2,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.awt.event.*;
 
 public class GraphingCalculator implements ActionListener, ChangeListener{
@@ -17,6 +18,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JLabel eL;
 	
 	static ExpressionSimplifier es = new ExpressionSimplifier();
+	static ArrayList<double[]> points = new ArrayList<double[]>();
 	
 	static int screenWidth;
 	static int screenHeight;
@@ -107,12 +109,18 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	private void graph(String expression) {
 		
 		double deltaX = X_BOUND / (detail * 10.0); //scaling detail by a factor of 10
+		points.clear();
 		
 		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
 			plotPoint(i, expression);
+			//drawLines()
 		}
-		for (double i = deltaX ; i < X_BOUND ; i += deltaX) {
+		
+		points.clear();
+		
+		for (double i = 0 ; i < X_BOUND ; i += deltaX) {
 			plotPoint(i, expression);
+			//drawLines();
 		}
 	}
 	
@@ -136,6 +144,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		y2 = yOffset - y2*Y_SIZE_OFFSET;
 		
 		if (y1 >= BOTTOM_SCREEN_LENGTH) return;
+		
+		points.add(new double[] {x1, y1});
 		pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 	}
 	
