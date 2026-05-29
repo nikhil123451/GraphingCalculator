@@ -14,6 +14,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JButton cB;
 	static JSlider dS;
 	static JLabel dL;
+	static JLabel eL;
 	
 	static ExpressionSimplifier es = new ExpressionSimplifier();
 	
@@ -25,7 +26,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int POINT_THICKNESS = 7;
 	static final double X_BOUND = 15;
 	static final double Y_BOUND = 45;
-	static int detail = 1000;
+	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
 	
@@ -86,6 +87,10 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		size = dL.getPreferredSize();
 		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
+		eL = new JLabel("e");
+		size = eL.getPreferredSize();
+		eL.setBounds(100, 430, size.width + X_SIZE_OFFSET, size.height);
+		
 		//adding everything to the frame and panel
 		frame.add(pn);
 		pn.add(eB);
@@ -94,6 +99,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		pn.add(dS);
 		pn.add(dL);
 		pn.add(cB);
+		pn.add(eL);
 		
 		frame.setVisible(true);
 	}
@@ -101,56 +107,41 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	private void graph(String expression) {
 		
 		double deltaX = X_BOUND / (detail * 10.0); //scaling detail by a factor of 10
-		double x1;
-		double y1;
-		double x2;
-		double y2;
-		String newExpression;
 		
 		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
-			x1 = i;
-			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
-			y1 = 0;
-			try {
-				y1 = es.simplifyExpression(newExpression);
-			} catch (NumberFormatException e) {
-				System.out.println("caught");
-				break;
-			}
-			
-			x2 = x1;
-			y2 = y1;
-			
-			x1 = xOffset + x1*X_SIZE_OFFSET;
-			y1 = yOffset - y1*Y_SIZE_OFFSET;
-			x2 = xOffset + x2*X_SIZE_OFFSET;
-			y2 = yOffset - y2*Y_SIZE_OFFSET;
-			
-			if (y1 >= BOTTOM_SCREEN_LENGTH) continue;
-			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
+			plotPoint(i, expression);
 		}
 		for (double i = deltaX ; i < X_BOUND ; i += deltaX) {
-			x1 = i;
-			newExpression = expression.replace("x", "("+Double.toString(x1)+")");
-			y1 = 0;
-			try {
-				y1 = es.simplifyExpression(newExpression);
-			} catch (NumberFormatException e) {
-				System.out.println("caught");
-				break;
-			}
-			
-			x2 = x1;
-			y2 = y1;
-			
-			x1 = xOffset + x1*X_SIZE_OFFSET;
-			y1 = yOffset - y1*Y_SIZE_OFFSET;
-			x2 = xOffset + x2*X_SIZE_OFFSET;
-			y2 = yOffset - y2*Y_SIZE_OFFSET;
-			
-			if (y1 >= BOTTOM_SCREEN_LENGTH) continue;
-			pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
+			plotPoint(i, expression);
 		}
+	}
+	
+	private void plotPoint(double x1, String expression) {
+		String newExpression = expression.replace("x", "("+Double.toString(x1)+")");
+		double y1 = 0;
+		try {
+			y1 = es.simplifyExpression(newExpression);
+		} catch (NumberFormatException e) {
+			eL.setVisible(true);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			eL.setVisible(false);
+			return;
+		}
+		
+		double x2 = x1;
+		double y2 = y1;
+		
+		x1 = xOffset + x1*X_SIZE_OFFSET;
+		y1 = yOffset - y1*Y_SIZE_OFFSET;
+		x2 = xOffset + x2*X_SIZE_OFFSET;
+		y2 = yOffset - y2*Y_SIZE_OFFSET;
+		
+		if (y1 >= BOTTOM_SCREEN_LENGTH) return;
+		pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 	}
 	
 	public void actionPerformed(ActionEvent e)
