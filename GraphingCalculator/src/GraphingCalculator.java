@@ -25,7 +25,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int POINT_THICKNESS = 7;
 	static final double X_BOUND = 15;
 	static final double Y_BOUND = 45;
-	static int detail = 1000;
+	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
 	
