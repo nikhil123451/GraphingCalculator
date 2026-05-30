@@ -25,7 +25,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int BOTTOM_SCREEN_LENGTH = 400;
 	static final int X_SIZE_OFFSET = 40;
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
-	static final int POINT_THICKNESS = 7;
+	static final int POINT_THICKNESS = 5;
+	static final int STANDARD_LINE_THICKNESS = 4;
 	static final double X_BOUND = 15;
 	static final double Y_BOUND = 45;
 	static int detail = 1;
@@ -89,7 +90,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		size = dL.getPreferredSize();
 		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
-		eL = new JLabel("");
+		eL = new JLabel("Enter a function below:");
 		size = eL.getPreferredSize();
 		eL.setBounds(100, 430, size.width + 6*X_SIZE_OFFSET, size.height);
 		
@@ -113,14 +114,14 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		
 		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
 			plotPoint(i, expression);
-			//drawLines()
+			drawLines();
 		}
 		
 		points.clear();
 		
 		for (double i = 0 ; i < X_BOUND ; i += deltaX) {
 			plotPoint(i, expression);
-			//drawLines();
+			drawLines();
 		}
 	}
 	
@@ -143,10 +144,33 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		x2 = xOffset + x2*X_SIZE_OFFSET;
 		y2 = yOffset - y2*Y_SIZE_OFFSET;
 		
-		if (y1 >= BOTTOM_SCREEN_LENGTH) return;
+		if (y1 >= BOTTOM_SCREEN_LENGTH) {
+			if(x1 == xOffset) {
+				points.add(new double[] {xOffset, BOTTOM_SCREEN_LENGTH});
+				return;
+			}
+			double[] previous = points.getLast();
+			double previousX = previous[0];
+			double previousY = previous[1];
+			
+			double slope = (y1 - previousY) / (x1 - previousX);
+			
+			double newX = ((BOTTOM_SCREEN_LENGTH - y1) / slope) + x1;
+			points.add(new double[] {newX, BOTTOM_SCREEN_LENGTH});
+			return;
+		}
 		
 		points.add(new double[] {x1, y1});
 		pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
+	}
+	
+	private void drawLines() {
+		for (int i = 0 ; i < points.size() - 1 ; i++) {
+			double[] coords1 = points.get(i);
+			double[] coords2 = points.get(i + 1);
+			
+			pn.addLine(coords1[0], coords1[1], coords2[0], coords2[1], STANDARD_LINE_THICKNESS);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e)
