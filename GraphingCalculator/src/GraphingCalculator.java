@@ -3,6 +3,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.awt.event.*;
 
 public class GraphingCalculator implements ActionListener, ChangeListener{
@@ -27,8 +28,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
 	static final int POINT_THICKNESS = 5;
 	static final int STANDARD_LINE_THICKNESS = 4;
-	static final double X_BOUND = 15;
-	static final double Y_BOUND = 45;
+	static final double X_BOUND = 20;
+	static final double Y_BOUND = 40;
 	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
@@ -114,15 +115,15 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		
 		for (double i = 0 ; i > -X_BOUND ; i -= deltaX) {
 			plotPoint(i, expression);
-			drawLines();
 		}
+		drawLines();
 		
 		points.clear();
 		
 		for (double i = 0 ; i < X_BOUND ; i += deltaX) {
 			plotPoint(i, expression);
-			drawLines();
 		}
+		drawLines();
 	}
 	
 	private void plotPoint(double x1, String expression) {
@@ -153,10 +154,16 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 			double previousX = previous[0];
 			double previousY = previous[1];
 			
+			if (previousY == BOTTOM_SCREEN_LENGTH) {
+				points.add(new double[] {x1, BOTTOM_SCREEN_LENGTH});
+				return;
+			}
+			
 			double slope = (y1 - previousY) / (x1 - previousX);
 			
 			double newX = ((BOTTOM_SCREEN_LENGTH - y1) / slope) + x1;
 			points.add(new double[] {newX, BOTTOM_SCREEN_LENGTH});
+			
 			return;
 		}
 		
