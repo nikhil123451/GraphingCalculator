@@ -45,6 +45,8 @@ public class ExpressionSimplifier {
 	public double simplifyExpression(String expression) {
 		
 		expression = insertImplicitMultiplication(expression); //method to handle cases like ")(" or "4x"
+		
+		expression = expression.strip();
 		//two stop process:
 		//1. go through the expression and parse it into a data structure representing the operations, the order of the operations, and values
 		Operation node = parseExpression(expression);
