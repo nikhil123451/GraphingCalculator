@@ -1,8 +1,13 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.LinkedList;
 
+import javax.swing.JPanel;
+
 public class Panel extends JPanel{
+	
 	protected LinkedList<Line> lines = new LinkedList<Line>();
 	static final double DEFAULT_STROKE = 4;
 	static boolean clearing = false;
