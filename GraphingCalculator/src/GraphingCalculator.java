@@ -57,6 +57,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		
 		//making panel and calculator initial graphics
 		pn.setLayout(null);
+		pn.setBackground(Color.WHITE);
 		addMainLines();
 		
 		eB = new JTextField(17);
@@ -83,6 +84,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
         dS.setPaintTrack(true);
         dS.setPaintTicks(true);
         dS.setPaintLabels(true);
+        dS.setBackground(Color.WHITE);
         dS.setValue(1);
         dS.setOrientation(SwingConstants.HORIZONTAL);
         dS.setMajorTickSpacing(1);
