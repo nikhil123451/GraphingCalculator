@@ -16,7 +16,10 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JButton cB;
 	static JSlider dS;
 	static JLabel dL;
+	static JTextField dB;
+	static JButton dBB;
 	static JLabel eL;
+	static JLabel dW;
 	
 	static ExpressionSimplifier es = new ExpressionSimplifier();
 	static ArrayList<double[]> points = new ArrayList<double[]>();
@@ -28,7 +31,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
 	static final int POINT_THICKNESS = 5;
 	static final int STANDARD_LINE_THICKNESS = 4;
-	static final double X_BOUND = 20;
+	static final double X_BOUND = 20; //actually 12 in reality, but 20 works better in java
 	static final double Y_BOUND = 40;
 	static int detail = 1;
 	static int xOffset;
@@ -91,9 +94,22 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		size = dL.getPreferredSize();
 		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
+		dB = new JTextField(10);
+		size = dB.getPreferredSize();
+		dB.setBounds(350, 510, size.width, size.height);
+		
+		dBB = new JButton("Set Custom Detail");
+		size = dBB.getPreferredSize();
+		dBB.setBounds(480, 505, size.width + X_SIZE_OFFSET, size.height);
+		dBB.addActionListener(gc);
+		
 		eL = new JLabel("Enter a function below:");
 		size = eL.getPreferredSize();
 		eL.setBounds(100, 430, size.width + 6*X_SIZE_OFFSET, size.height);
+		
+		dW = new JLabel("(Note: Any detail higher than 100 causes significant lag)");
+		size = dW.getPreferredSize();
+		dW.setBounds(350, 535, size.width + 6*X_SIZE_OFFSET, size.height);
 		
 		//adding everything to the frame and panel
 		frame.add(pn);
@@ -104,6 +120,9 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		pn.add(dL);
 		pn.add(cB);
 		pn.add(eL);
+		pn.add(dB);
+		pn.add(dBB);
+		pn.add(dW);
 		
 		frame.setVisible(true);
 	}
@@ -131,8 +150,10 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		double y1 = 0;
 		try {
 			y1 = es.simplifyExpression(newExpression);
+			
+			if (Double.isNaN(y1)) return;
 		} catch (NumberFormatException e) {
-			eL.setText("Sorry, I didn't understand your input.");
+			sendError();
 			return;
 		}
 		
@@ -187,6 +208,19 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
             graph(eB.getText());
         } else if (s.equals("Clear")) {
         	pn.clear();
+        } else if (s.equals("Set Custom Detail")) {
+        	try {
+        	
+        	if (Integer.parseInt(dB.getText()) < 0) throw new NumberFormatException();
+        	
+        	detail = Integer.parseInt(dB.getText());
+        	
+        	} catch (NumberFormatException nE) {
+        		sendError();
+        		return;
+        	}
+        	eL.setText("");
+            dL.setText("Detail: " + detail);
         }
     }
 	
@@ -199,6 +233,10 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	public void stateChanged(ChangeEvent e)
     {
 		detail = dS.getValue();
-        dL.setText("Detail: " + dS.getValue());
+        dL.setText("Detail: " + detail);
     }
+	
+	private void sendError() {
+		eL.setText("Sorry, I didn't understand your input.");
+	}
 }
