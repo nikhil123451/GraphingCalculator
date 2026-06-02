@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.Color;
 
 public class Line {
 	protected double x1;
