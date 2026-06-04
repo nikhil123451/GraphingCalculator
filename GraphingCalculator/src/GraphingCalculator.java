@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -15,7 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class GraphingCalculator implements ActionListener, ChangeListener{
+public class GraphingCalculator implements ActionListener, ChangeListener, MouseMotionListener{
 	
 	static Panel pn = new Panel();
 	static JFrame frame;
@@ -29,6 +31,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static JButton dBB;
 	static JLabel eL;
 	static JLabel dW;
+	static JLabel wI;
+	static JLabel mI;
 	
 	static ExpressionSimplifier es = new ExpressionSimplifier();
 	static ArrayList<double[]> points = new ArrayList<double[]>();
@@ -40,8 +44,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
 	static final int POINT_THICKNESS = 5;
 	static final int STANDARD_LINE_THICKNESS = 4;
-	static final double X_BOUND = 20; //actually 12 in reality, but 20 works better in java
-	static final double Y_BOUND = 40;
+	static final double X_BOUND = 50;
 	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
@@ -67,6 +70,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		//making panel and calculator initial graphics
 		pn.setLayout(null);
 		pn.setBackground(Color.WHITE);
+		pn.addMouseMotionListener(gc);
 		addMainLines();
 		
 		eB = new JTextField(17);
@@ -122,6 +126,12 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		size = dW.getPreferredSize();
 		dW.setBounds(350, 535, size.width + 6*X_SIZE_OFFSET, size.height);
 		
+		wI = new JLabel("<html>Window: <br/>X: [-14, 14] <br/>Y: [-40, 60] </html>");
+		size = wI.getPreferredSize();
+		wI.setBounds(5, 400, size.width + X_SIZE_OFFSET, size.height);
+		
+		mI
+		
 		//adding everything to the frame and panel
 		frame.add(pn);
 		pn.add(eB);
@@ -134,6 +144,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		pn.add(dB);
 		pn.add(dBB);
 		pn.add(dW);
+		pn.add(wI);
+		pn.add(mI);
 		
 		frame.setVisible(true);
 	}
@@ -172,7 +184,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		double x2 = x1;
 		double y2 = y1;
 		
-		x1 = xOffset + x1*X_SIZE_OFFSET;
+		x1 = xOffset + x1*X_SIZE_OFFSET; //xActual = offset + simulatedX*sizeOffset (simulatedX = (xActual - offset)/sizeOffset)
 		y1 = yOffset - y1*Y_SIZE_OFFSET;
 		x2 = xOffset + x2*X_SIZE_OFFSET;
 		y2 = yOffset - y2*Y_SIZE_OFFSET;
@@ -250,4 +262,16 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 	private void sendError() {
 		eL.setText("Sorry, I didn't understand your input.");
 	}
+	
+	public void mouseMoved(MouseEvent e) {
+		int xPos = (e.getX() - xOffset)/X_SIZE_OFFSET;
+		int yPos = (e.getY() - yOffset)/-Y_SIZE_OFFSET;
+		
+		System.out.println(Integer.toString(xPos) + ", " + Integer.toString(yPos));
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+	
 }
