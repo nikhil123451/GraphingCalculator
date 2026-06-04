@@ -44,9 +44,12 @@ public class ExpressionSimplifier {
 	//wrapper
 	public double simplifyExpression(String expression) {
 		
-		expression = insertImplicitMultiplication(expression); //method to handle cases like ")(" or "4x"
+		expression = expression.replace(" ", "");
 		
-		expression = expression.strip();
+		//methods to format the equation properly for the simplifier
+		expression = insertImplicitMultiplication(expression);
+		expression = handleMinusBeforeParenthesis(expression);
+		
 		//two stop process:
 		//1. go through the expression and parse it into a data structure representing the operations, the order of the operations, and values
 		Operation node = parseExpression(expression);
@@ -189,7 +192,7 @@ public class ExpressionSimplifier {
 		return input;
 	}
 	
-	private static String insertImplicitMultiplication(String expression) { //helper method to place multiplication symbols where needed
+	private static String insertImplicitMultiplication(String expression) { //helper to add implicit multiplication between parenthesis n' stuff like that
 
 	    String result = "";
 
@@ -197,11 +200,13 @@ public class ExpressionSimplifier {
 
 	        char current = expression.charAt(i);
 	        char next = expression.charAt(i + 1);
+
 	        result += current;
 
 	        boolean currentCanMultiply = Character.isDigit(current) || current == ')' || current == '.';
-	        boolean nextCanMultiply = next == '(' || Character.isLetter(next); //checking for x's
 
+	        boolean nextCanMultiply = next == '(' || Character.isLetter(next);
+	        
 	        if (currentCanMultiply && nextCanMultiply) {
 	            result += "*";
 	        }
@@ -216,6 +221,42 @@ public class ExpressionSimplifier {
 
 	    return result;
 	}
+	
+	private static String handleMinusBeforeParenthesis(String expression) {
 
+	    String result = "";
 
+	    for (int i = 0; i < expression.length(); i++) {
+
+	        char current = expression.charAt(i);
+
+	        if (current == '-' && i < expression.length() - 1 && expression.charAt(i + 1) == '(') {
+
+	            boolean unary = false;
+
+	            if (i == 0) {
+	                unary = true;
+	            }
+	            else {
+
+	                char prev = expression.charAt(i - 1);
+
+	                if (prev == '(' || prev == '+' || prev == '-' ||
+	                    prev == '*' || prev == '/' || prev == '^') {
+
+	                    unary = true;
+	                }
+	            }
+
+	            if (unary) {
+	                result += "-1*";
+	                continue;
+	            }
+	        }
+
+	        result += current;
+	    }
+
+	    return result;
+	}
 }
