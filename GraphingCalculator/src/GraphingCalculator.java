@@ -116,7 +116,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener{
 		
 		eL = new JLabel("Enter a function below:");
 		size = eL.getPreferredSize();
-		eL.setBounds(100, 430, size.width + 6*X_SIZE_OFFSET, size.height);
+		eL.setBounds(100, 425, size.width + 6*X_SIZE_OFFSET, size.height);
 		
 		dW = new JLabel("(Note: Any detail higher than 100 causes significant lag)");
 		size = dW.getPreferredSize();
