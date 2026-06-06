@@ -39,6 +39,8 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 	
 	static int screenWidth;
 	static int screenHeight;
+	static final int IDEAL_SCREEN_WIDTH = 960;
+	static final int IDEAL_SCREEN_HEIGHT = 600;
 	static final int BOTTOM_SCREEN_LENGTH = 400;
 	static final int X_SIZE_OFFSET = 40;
 	static final int Y_SIZE_OFFSET = 4; //x and y offsets make graph window (-12<=x<=12, -45<=y<=45) approximately
@@ -48,6 +50,10 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 	static int detail = 1;
 	static int xOffset;
 	static int yOffset; //both x and y offsets should represent the origin on the graph (0,0)
+	static int xLower;
+	static int xUpper;
+	static int yLower;
+	static int yUpper;
 	
 	public static void main(String[] args) {
 		GraphingCalculator gc = new GraphingCalculator();
@@ -64,7 +70,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 		yOffset = realHeight;
 		
 		frame = new JFrame("Graphing Calculator");
-		frame.setBounds(realWidth, realHeight, 960, 600); //found these create the ideal window
+		frame.setBounds(realWidth, realHeight, IDEAL_SCREEN_WIDTH, IDEAL_SCREEN_HEIGHT);
 		frame.getContentPane();
 		
 		//making panel and calculator initial graphics
@@ -126,11 +132,18 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 		size = dW.getPreferredSize();
 		dW.setBounds(350, 535, size.width + 6*X_SIZE_OFFSET, size.height);
 		
-		wI = new JLabel("<html>Window: <br/>X: [-14, 14] <br/>Y: [-40, 60] </html>");
+		xLower = (0 - xOffset)/X_SIZE_OFFSET;
+		xUpper = (IDEAL_SCREEN_WIDTH - xOffset)/X_SIZE_OFFSET;
+		yLower = (BOTTOM_SCREEN_LENGTH - yOffset)/-Y_SIZE_OFFSET;
+		yUpper = (0 - yOffset)/-Y_SIZE_OFFSET;
+		
+		wI = new JLabel(String.format("<html>Window: <br/>X: [%d, %d] <br/>Y: [%d, %d] </html>", xLower, xUpper, yLower, yUpper));
 		size = wI.getPreferredSize();
 		wI.setBounds(5, 400, size.width + X_SIZE_OFFSET, size.height);
 		
-		mI
+		mI = new JLabel("<html>Position: <br/>()");
+		size = mI.getPreferredSize();
+		mI.setBounds(5, 450, size.width + X_SIZE_OFFSET, size.height);
 		
 		//adding everything to the frame and panel
 		frame.add(pn);
@@ -175,7 +188,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 			y1 = es.simplifyExpression(newExpression);
 			
 			if (Double.isNaN(y1)) return;
-		} catch (NumberFormatException e) {
+		} catch (Exception e) {
 			sendError();
 			return;
 		}
@@ -267,7 +280,9 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 		int xPos = (e.getX() - xOffset)/X_SIZE_OFFSET;
 		int yPos = (e.getY() - yOffset)/-Y_SIZE_OFFSET;
 		
-		System.out.println(Integer.toString(xPos) + ", " + Integer.toString(yPos));
+		if ((xLower <= xPos && xPos <= xUpper) && (yLower <= yPos && yPos <= yUpper)) {
+			mI.setText(String.format("<html>Position: <br/>(%d, %d)", xPos, yPos));
+		}
 	}
 
 	@Override
