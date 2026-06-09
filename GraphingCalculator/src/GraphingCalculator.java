@@ -19,20 +19,20 @@ import javax.swing.event.ChangeListener;
 
 public class GraphingCalculator implements ActionListener, ChangeListener, MouseMotionListener{
 	
-	static Panel pn = new Panel();
+	static Panel panel = new Panel();
 	static JFrame frame;
-	static JTextField eB;
-	static JLabel eBL;
-	static JButton eBB;
-	static JButton cB;
-	static JSlider dS;
-	static JLabel dL;
-	static JTextField dB;
-	static JButton dBB;
-	static JLabel eL;
-	static JLabel dW;
-	static JLabel wI;
-	static JLabel mI;
+	static JTextField equationBox;
+	static JLabel equationBoxLabel;
+	static JButton equationBoxButton;
+	static JButton clearButton;
+	static JSlider detailSlider;
+	static JLabel detailLabel;
+	static JTextField detailBox;
+	static JButton detailBoxButton;
+	static JLabel errorLabel;
+	static JLabel detailWarning;
+	static JLabel windowInformation;
+	static JLabel mouseInformation;
 	
 	static ExpressionSimplifier es = new ExpressionSimplifier();
 	static ArrayList<double[]> points = new ArrayList<double[]>();
@@ -74,91 +74,91 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 		frame.getContentPane();
 		
 		//making panel and calculator initial graphics
-		pn.setLayout(null);
-		pn.setBackground(Color.WHITE);
-		pn.addMouseMotionListener(gc);
+		panel.setLayout(null);
+		panel.setBackground(Color.WHITE);
+		panel.addMouseMotionListener(gc);
 		addMainLines();
 		
-		eB = new JTextField(17);
-		Dimension size = eB.getPreferredSize();
-		eB.setBounds(100, 450, size.width, size.height);
+		equationBox = new JTextField(17);
+		Dimension size = equationBox.getPreferredSize();
+		equationBox.setBounds(100, 450, size.width, size.height);
 		
-		eBL = new JLabel("y =");
-		size = eBL.getPreferredSize();
-		eBL.setBounds(80, 450, size.width, size.height);
+		equationBoxLabel = new JLabel("y =");
+		size = equationBoxLabel.getPreferredSize();
+		equationBoxLabel.setBounds(80, 450, size.width, size.height);
 		
-		eBB = new JButton("Graph");
-		size = eBB.getPreferredSize();
-		eBB.setBounds(300, 447, size.width + X_SIZE_OFFSET, size.height);
-		eBB.addActionListener(gc);
+		equationBoxButton = new JButton("Graph");
+		size = equationBoxButton.getPreferredSize();
+		equationBoxButton.setBounds(300, 447, size.width + X_SIZE_OFFSET, size.height);
+		equationBoxButton.addActionListener(gc);
 		
-		cB = new JButton("Clear");
-		size = cB.getPreferredSize();
-		cB.setBounds(425, 447, size.width + X_SIZE_OFFSET, size.height);
-		cB.addActionListener(gc);
+		clearButton = new JButton("Clear");
+		size = clearButton.getPreferredSize();
+		clearButton.setBounds(425, 447, size.width + X_SIZE_OFFSET, size.height);
+		clearButton.addActionListener(gc);
 		
-		dS = new JSlider(0, 10);
-		size = dS.getPreferredSize();
-		dS.setBounds(80, 500, size.width + X_SIZE_OFFSET, size.height + X_SIZE_OFFSET);
-        dS.setPaintTrack(true);
-        dS.setPaintTicks(true);
-        dS.setPaintLabels(true);
-        dS.setBackground(Color.WHITE);
-        dS.setValue(1);
-        dS.setOrientation(SwingConstants.HORIZONTAL);
-        dS.setMajorTickSpacing(1);
-        dS.setSnapToTicks(true);
-        dS.addChangeListener(gc);
-        dS.setFont(new Font("Arial", Font.BOLD, 14));
+		detailSlider = new JSlider(0, 10);
+		size = detailSlider.getPreferredSize();
+		detailSlider.setBounds(80, 500, size.width + X_SIZE_OFFSET, size.height + X_SIZE_OFFSET);
+        detailSlider.setPaintTrack(true);
+        detailSlider.setPaintTicks(true);
+        detailSlider.setPaintLabels(true);
+        detailSlider.setBackground(Color.WHITE);
+        detailSlider.setValue(1);
+        detailSlider.setOrientation(SwingConstants.HORIZONTAL);
+        detailSlider.setMajorTickSpacing(1);
+        detailSlider.setSnapToTicks(true);
+        detailSlider.addChangeListener(gc);
+        detailSlider.setFont(new Font("Arial", Font.BOLD, 14));
 		
-		dL = new JLabel("Detail: 1");
-		size = dL.getPreferredSize();
-		dL.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
+		detailLabel = new JLabel("Detail: 1");
+		size = detailLabel.getPreferredSize();
+		detailLabel.setBounds(100, 480, size.width + X_SIZE_OFFSET, size.height);
 		
-		dB = new JTextField(10);
-		size = dB.getPreferredSize();
-		dB.setBounds(350, 510, size.width, size.height);
+		detailBox = new JTextField(10);
+		size = detailBox.getPreferredSize();
+		detailBox.setBounds(350, 510, size.width, size.height);
 		
-		dBB = new JButton("Set Custom Detail");
-		size = dBB.getPreferredSize();
-		dBB.setBounds(480, 505, size.width + X_SIZE_OFFSET, size.height);
-		dBB.addActionListener(gc);
+		detailBoxButton = new JButton("Set Custom Detail");
+		size = detailBoxButton.getPreferredSize();
+		detailBoxButton.setBounds(480, 505, size.width + X_SIZE_OFFSET, size.height);
+		detailBoxButton.addActionListener(gc);
 		
-		eL = new JLabel("Enter a function below:");
-		size = eL.getPreferredSize();
-		eL.setBounds(100, 425, size.width + 6*X_SIZE_OFFSET, size.height);
+		errorLabel = new JLabel("Enter a function below:");
+		size = errorLabel.getPreferredSize();
+		errorLabel.setBounds(100, 425, size.width + 6*X_SIZE_OFFSET, size.height);
 		
-		dW = new JLabel("(Note: Any detail higher than 100 causes significant lag)");
-		size = dW.getPreferredSize();
-		dW.setBounds(350, 535, size.width + 6*X_SIZE_OFFSET, size.height);
+		detailWarning = new JLabel("(Note: Any detail higher than 100 causes significant lag)");
+		size = detailWarning.getPreferredSize();
+		detailWarning.setBounds(350, 535, size.width + 6*X_SIZE_OFFSET, size.height);
 		
 		xLower = (0 - xOffset)/X_SIZE_OFFSET;
 		xUpper = (IDEAL_SCREEN_WIDTH - xOffset)/X_SIZE_OFFSET;
 		yLower = (BOTTOM_SCREEN_LENGTH - yOffset)/-Y_SIZE_OFFSET;
 		yUpper = (0 - yOffset)/-Y_SIZE_OFFSET;
 		
-		wI = new JLabel(String.format("<html>Window: <br/>X: [%d, %d] <br/>Y: [%d, %d] </html>", xLower, xUpper, yLower, yUpper));
-		size = wI.getPreferredSize();
-		wI.setBounds(5, 400, size.width + X_SIZE_OFFSET, size.height);
+		windowInformation = new JLabel(String.format("<html>Window: <br/>X: [%d, %d] <br/>Y: [%d, %d] </html>", xLower, xUpper, yLower, yUpper));
+		size = windowInformation.getPreferredSize();
+		windowInformation.setBounds(5, 400, size.width + X_SIZE_OFFSET, size.height);
 		
-		mI = new JLabel("<html>Position: <br/>()");
-		size = mI.getPreferredSize();
-		mI.setBounds(5, 450, size.width + X_SIZE_OFFSET, size.height);
+		mouseInformation = new JLabel("<html>Position: <br/>()");
+		size = mouseInformation.getPreferredSize();
+		mouseInformation.setBounds(5, 450, size.width + X_SIZE_OFFSET, size.height);
 		
 		//adding everything to the frame and panel
-		frame.add(pn);
-		pn.add(eB);
-		pn.add(eBL);
-		pn.add(eBB);
-		pn.add(dS);
-		pn.add(dL);
-		pn.add(cB);
-		pn.add(eL);
-		pn.add(dB);
-		pn.add(dBB);
-		pn.add(dW);
-		pn.add(wI);
-		pn.add(mI);
+		frame.add(panel);
+		panel.add(equationBox);
+		panel.add(equationBoxLabel);
+		panel.add(equationBoxButton);
+		panel.add(detailSlider);
+		panel.add(detailLabel);
+		panel.add(clearButton);
+		panel.add(errorLabel);
+		panel.add(detailBox);
+		panel.add(detailBoxButton);
+		panel.add(detailWarning);
+		panel.add(windowInformation);
+		panel.add(mouseInformation);
 		
 		frame.setVisible(true);
 	}
@@ -193,7 +193,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 			return;
 		}
 		
-		eL.setText("");
+		errorLabel.setText("");
 		double x2 = x1;
 		double y2 = y1;
 		
@@ -225,7 +225,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 		}
 		
 		points.add(new double[] {x1, y1});
-		pn.addLine(x1, y1, x2, y2, POINT_THICKNESS);
+		panel.addLine(x1, y1, x2, y2, POINT_THICKNESS);
 	}
 	
 	private void drawLines() {
@@ -233,7 +233,7 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
 			double[] coords1 = points.get(i);
 			double[] coords2 = points.get(i + 1);
 			
-			pn.addLine(coords1[0], coords1[1], coords2[0], coords2[1], STANDARD_LINE_THICKNESS);
+			panel.addLine(coords1[0], coords1[1], coords2[0], coords2[1], STANDARD_LINE_THICKNESS);
 		}
 	}
 	
@@ -241,47 +241,47 @@ public class GraphingCalculator implements ActionListener, ChangeListener, Mouse
     {
         String s = e.getActionCommand();
         if (s.equals("Graph")) {
-            graph(eB.getText());
+            graph(equationBox.getText());
         } else if (s.equals("Clear")) {
-        	pn.clear();
+        	panel.clear();
         } else if (s.equals("Set Custom Detail")) {
         	try {
         	
-        	if (Integer.parseInt(dB.getText()) < 0) throw new NumberFormatException();
+        	if (Integer.parseInt(detailBox.getText()) < 0) throw new NumberFormatException();
         	
-        	detail = Integer.parseInt(dB.getText());
+        	detail = Integer.parseInt(detailBox.getText());
         	
         	} catch (NumberFormatException nE) {
         		sendError();
         		return;
         	}
-        	eL.setText("");
-            dL.setText("Detail: " + detail);
+        	errorLabel.setText("");
+            detailLabel.setText("Detail: " + detail);
         }
     }
 	
 	protected static void addMainLines() {
-		pn.addLine(0, 400, screenWidth, 400); //bottom screen line
-		pn.addLine(xOffset, 400, xOffset, 0, 2); //y-axis
-		pn.addLine(0, yOffset, screenWidth, yOffset, 2); //x-axis
+		panel.addLine(0, 400, screenWidth, 400); //bottom screen line
+		panel.addLine(xOffset, 400, xOffset, 0, 2); //y-axis
+		panel.addLine(0, yOffset, screenWidth, yOffset, 2); //x-axis
 	}
 	
 	public void stateChanged(ChangeEvent e)
     {
-		detail = dS.getValue();
-        dL.setText("Detail: " + detail);
+		detail = detailSlider.getValue();
+        detailLabel.setText("Detail: " + detail);
     }
 	
 	private void sendError() {
-		eL.setText("Sorry, I didn't understand your input.");
+		errorLabel.setText("Sorry, I didn't understand your input.");
 	}
 	
 	public void mouseMoved(MouseEvent e) {
-		int xPos = (e.getX() - xOffset)/X_SIZE_OFFSET;
-		int yPos = (e.getY() - yOffset)/-Y_SIZE_OFFSET;
+		int xPosition = (e.getX() - xOffset)/X_SIZE_OFFSET;
+		int yPosition = (e.getY() - yOffset)/-Y_SIZE_OFFSET;
 		
-		if ((xLower <= xPos && xPos <= xUpper) && (yLower <= yPos && yPos <= yUpper)) {
-			mI.setText(String.format("<html>Position: <br/>(%d, %d)", xPos, yPos));
+		if ((xLower <= xPosition && xPosition <= xUpper) && (yLower <= yPosition && yPosition <= yUpper)) {
+			mouseInformation.setText(String.format("<html>Position: <br/>(%d, %d)", xPosition, yPosition));
 		}
 	}
 
